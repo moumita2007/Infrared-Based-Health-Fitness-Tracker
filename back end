@@ -1,0 +1,26 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// Mock health data (in reality, this data would be fetched from the infrared sensor)
+let healthData = {
+    heartRate: 75,
+    bodyTemperature: 37.0
+};
+
+// Endpoint to fetch health data
+app.get('/health-data', (req, res) => {
+    res.json(healthData);
+});
+
+// Endpoint to simulate data changes (just for testing)
+app.get('/update-health-data', (req, res) => {
+    healthData.heartRate = Math.floor(Math.random() * (100 - 60) + 60);
+    healthData.bodyTemperature = (Math.random() * (37.5 - 36.5) + 36.5).toFixed(1);
+    res.json(healthData);
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
