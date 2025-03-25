@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & Fitness Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Health & Fitness Tracker</h1>
+        </div>
+        <div class="data">
+            <h3>Current Health Data</h3>
+            <p id="heartRate">Heart Rate: 75 bpm</p>
+            <p id="bodyTemperature">Body Temperature: 37.0°C</p>
+        </div>
+        <div class="chart-container">
+            <canvas id="healthChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Mock health data (in reality, this would come from a backend server)
+        let healthData = {
+            heartRate: 75,
+            bodyTemperature: 37.0,
+        };
+
+        // Simulate data change every 5 seconds
+        setInterval(() => {
+            healthData.heartRate = Math.floor(Math.random() * (100 - 60) + 60); // Random heart rate between 60 and 100
+            healthData.bodyTemperature = (Math.random() * (37.5 - 36.5) + 36.5).toFixed(1); // Random temperature between 36.5 and 37.5
+
+            // Update the UI with the new data
+            document.getElementById('heartRate').textContent = `Heart Rate: ${healthData.heartRate} bpm`;
+            document.getElementById('bodyTemperature').textContent = `Body Temperature: ${healthData.bodyTemperature}°C`;
+
+            // Update the chart
+            updateChart(healthData);
+        }, 5000); // Update every 5 seconds
+
+        // Initialize Chart.js chart
+        let ctx = document.getElementById('healthChart').getContext('2d');
+        let healthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Heart Rate',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false
+                }, {
+                    label: 'Body Temperature',
+                    data: [],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Function to update the chart with new data
+        function updateChart(data) {
+            const currentTime = Date.now();
+            if (healthChart.data.labels.length >= 10) {
+                healthChart.data.labels.shift();
+                healthChart.data.datasets[0].data.shift();
+                healthChart.data.datasets[1].data.shift();
+            }
+            healthChart.data.labels.push(currentTime);
+            healthChart.data.datasets[0].data.push(data.heartRate);
+            healthChart.data.datasets[1].data.push(data.bodyTemperature);
+            healthChart.update();
+        }
+    </script>
+</body>
+</html>
